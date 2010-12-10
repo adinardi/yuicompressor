@@ -44,6 +44,22 @@
         </jar>
     </target>
 
+    <target name="build.server.jar" depends="build.classes">
+        <mkdir dir="${build.dir}/jar"/>
+        <!-- The order is important here. Rhino MUST be unjarred first!
+             (some of our own classes will override the Rhino classes) -->
+        <unjar src="${lib.dir}/jargs-1.0.jar" dest="${build.dir}/jar"/>
+        <unjar src="${lib.dir}/rhino-1.6R7.jar" dest="${build.dir}/jar"/>
+        <copy todir="${build.dir}/jar">
+            <fileset dir="${build.dir}/classes" includes="**/*.class"/>
+        </copy>
+        <jar destfile="${build.dir}/${server.jar.name}" basedir="${build.dir}/jar">
+            <manifest>
+                <attribute name="Main-Class" value="com.yahoo.platform.yui.compressor.ServerBootstrap"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="build.dist.package" depends="build.jar">
         <mkdir dir="${build.dir}/${dist.package.name}"/>
         <mkdir dir="${build.dir}/${dist.package.name}/build"/>
